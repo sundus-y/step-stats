@@ -2,3 +2,6 @@
 
 # Cucumber Step Stats
 Cucumber formatter that generates stats on all steps that are used during testing.
+
+## Sample File
+http://sundus-y.github.io/step_stats.html
