@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'step-stats'
-  s.version     = '0.0.1'
+  s.version     = '0.0.22'
   s.date        = '2015-11-17'
   s.summary     = "Cucumber formatter that generates stats on all steps that are used during testing."
   s.description = "Cucumber formatter that generates stats on all steps that are used during testing."
