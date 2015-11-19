@@ -1,0 +1,141 @@
+<html>
+<head>
+  <title>Cucumber Steps Stats</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <script type="text/javascript"
+          src="https://www.google.com/jsapi?autoload={
+            'modules':[{
+              'name':'visualization',
+              'version':'1',
+              'packages':['corechart']
+            }]
+          }"></script>
+  <style>
+      nav#top-menu{border-color: #2F2F2F!important;}
+      body{padding-top: 50px;}
+      ul.side-bar{height: 100%;}
+      .tabs-left > div.side-bar {position:fixed; height: 100%;}
+      .tabs-left > div.tab-content {margin-left: 200px;}
+      .tabs-left > div > .nav-tabs > li{float: none;}
+      .tabs-left > div > .nav-tabs > li > a{min-width: 74px;margin-right: 0;margin-bottom: 3px;}
+      .tabs-left > div > .nav-tabs {background-color: #222;float: left;margin-right: 19px;border-right: 1px solid #ddd;}
+      .tabs-left > div > .nav-tabs > li > a {margin-right: -1px;-webkit-border-radius: 4px 0 0 4px;-moz-border-radius: 4px 0 0 4px;border-radius: 4px 0 0 4px;color:#9d9d9d}
+      .tabs-left > div > .nav-tabs > li > a:hover,
+      .tabs-left > div > .nav-tabs > li > a:focus {border-color: #eeeeee #5f635d #eeeeee #eeeeee;}
+      .tabs-left > div > .nav-tabs .active > a,
+      .tabs-left > div > .nav-tabs .active > a:hover,
+      .tabs-left > div > .nav-tabs .active > a:focus {border-color: #ddd transparent #ddd #ddd;*border-right-color: #ffffff;}
+      .tabs-left > div > .tab-pane {float: left;width: 99%;}
+      span.percentage{float: right;}
+      div.details_chart{height: 400px;}
+      div.tps_chart{height: 800px;}
+  </style>
+</head>
+<body>
+<nav id="top-menu" class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#"><%= Rails.application.class.parent_name %> - Cucumber Steps Stats</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#dashboard">Dashboard</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="tabbable tabs-left">
+  <!-- Nav tabs -->
+  <div class="side-bar">
+    <ul class="nav nav-tabs side-bar" role="tablist">
+      <li role="presentation" class="active"><a href="#all" aria-controls="all" role="tab" data-toggle="tab">All Steps</a></li>
+      <li role="presentation"><a href="#top30time" aria-controls="top30time" role="tab" data-toggle="tab">Top 30% Steps by Time</a></li>
+      <li role="presentation"><a href="#top30count" aria-controls="top30count" role="tab" data-toggle="tab">Top 30% Steps by Count</a></li>
+      <li role="presentation"><a href="#timeperstep" aria-controls="timeperstep" role="tab" data-toggle="tab">Time Spent per Step</a></li>
+    </ul>
+  </div>
+  <!-- Tab panes -->
+  <div class="tab-content table-responsive">
+    <div role="tabpanel" class="tab-pane active" id="all">
+      <%= ERB.new(File.read(@path+"/table_partial.erb")).result(binding) %>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="top30time">
+      <% @data = @sss.top30time %>
+      <%= ERB.new(File.read(@path+"/table_partial.erb")).result(binding) %>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="top30count">
+      <% @data = @sss.top30count %>
+      <%= ERB.new(File.read(@path+"/table_partial.erb")).result(binding) %>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="timeperstep">
+      <span data-results="<%= ERB::Util.h(@sss.to_chart_data) %>"></span>
+      <div class="tps_chart"></div>
+    </div>
+  </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $.each($(".data-table"),function(i,table){$(table).find("tr:odd").addClass("master");});
+        $.each($(".data-table"),function(i,table){
+            $(table).find("tr:not(.master)").hide();
+            $(table).find("tr:first-child").show();
+            $(table).find("tr.master").click(function(){
+                var chart_data = eval($(this).data("durations"));
+                $(this).next("tr").toggle();
+                drawDetailsChart(this, chart_data);
+            });
+        });
+        $("a[href='#timeperstep']").click(function(){
+            drawTimePerStepChart();
+        });
+    });
+    function drawDetailsChart(elem,raw_data) {
+        var dataTable= new google.visualization.DataTable();
+        dataTable.addColumn('string', 'Count');
+        dataTable.addColumn('number', 'Duration in Seconds');
+        dataTable.addColumn({type: 'string', role: 'style' });
+        dataTable.addColumn({type: 'string', role: 'tooltip'});
+
+        dataTable.addRows(raw_data);
+
+        var options = {
+            title: 'Timming of all the calls for the above step.',
+            vAxis: {viewWindow: {min:0} },
+            legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.ColumnChart($(elem).next().find('.details_chart')[0]);
+        chart.draw(dataTable, options);
+    }
+    function drawTimePerStepChart() {
+        var chart_data = eval($('div#timeperstep').find('span').data("results"));
+
+        var dataTable= new google.visualization.DataTable();
+        dataTable.addColumn('string', 'Name');
+        dataTable.addColumn('number', 'Duration in Seconds');
+        dataTable.addColumn({type: 'string', role: 'tooltip'});
+
+        dataTable.addRows(chart_data);
+
+        var options = {
+            title: 'Which Step took most of the time ?',
+            is3D: true
+        };
+
+        var chart = new google.visualization.PieChart($('div#timeperstep').find('.tps_chart')[0]);
+        setTimeout(function(){
+            chart.draw(dataTable, options);
+        },1);
+
+    }
+</script>
+</body>
+</html>

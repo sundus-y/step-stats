@@ -1,0 +1,32 @@
+<table id="all-table" class="data-table table table-hover">
+  <thead>
+  <td>Step</td>
+  <td>Definition</td>
+  <td>Avg</td>
+  <td>SD</td>
+  <td>Max</td>
+  <td>Min</td>
+  <td>Count</td>
+  </thead>
+  <% @data.each_with_index do |stat,index| %>
+      <tr data-durations="<%= ERB::Util.h(stat.to_chart_data) %>">
+        <td>
+          <span><%= index+1 %></span>
+                <span class="percentage">
+                  <%= @sss.percent(stat,'floor') %>%
+                </span>
+        </td>
+        <td title="<%= stat.location %>" style="background: -webkit-linear-gradient(left, #DC4141 <%= @sss.percent(stat) %>%, white <%= @sss.percent(stat) %>%);"><%= stat.name %></td>
+        <td><%= stat.avg %></td>
+        <td><%= stat.stddev %></td>
+        <td><%= stat.max %></td>
+        <td><%= stat.min %></td>
+        <td><%= stat.count %></td>
+      </tr>
+      <tr>
+        <td colspan="7">
+          <div id="chart-<%= index+1 %>" class="details_chart">Details</div>
+        </td>
+      </tr>
+  <% end %>
+</table>
