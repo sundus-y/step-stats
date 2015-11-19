@@ -15,7 +15,7 @@ module StepStats
 
     def before_step_result(keyword, step_match, multiline_arg, status, exception, source_indent, background, file_colon_line)
       @duration = Time.now - @start_time
-      @sss.add_stat(step_match.step_definition,@duration,status,file_colon_line) if @duration > 0
+      @sss.add_stat(step_match.step_definition,@duration,status,file_colon_line) if @duration > 0 && !step_match.step_definition.nil?
       super
     end
 
