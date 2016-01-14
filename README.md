@@ -7,13 +7,13 @@ Cucumber formatter that generates stats on all steps that are used during testin
 
 1. Add `gem 'step-stats'` to your `Gemfile`
 
-2. Do bundle install
+2. Do `bundle install`
 
 ## Configuration
 
-1. By adding `--format CucumberStatistics::Formatter` to your `cucumber.yml` file.
+1. By adding `--format StepStatss::Formatter` to your `cucumber.yml` file.
 
-2. Or, use it directly when running cucumber with the option `--format CucumberStatistics::Formatter`.
+2. Or, use it directly when running cucumber with the option `--format StepStats::Formatter`.
 
 ## Output
 

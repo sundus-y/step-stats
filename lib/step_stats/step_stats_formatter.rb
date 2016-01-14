@@ -9,12 +9,12 @@ module StepStats
     end
 
     def before_step(step)
-      @start_time = Time.now
+      @start_time = `ruby -e 'puts "%.3f" % Time.now'`.to_f
       super
     end
 
     def before_step_result(keyword, step_match, multiline_arg, status, exception, source_indent, background, file_colon_line)
-      @duration = Time.now - @start_time
+      @duration = `ruby -e 'puts "%.3f" % Time.now'`.to_f - @start_time
       @sss.add_stat(step_match.step_definition,@duration,status,file_colon_line) if @duration > 0 && !step_match.step_definition.nil?
       super
     end
