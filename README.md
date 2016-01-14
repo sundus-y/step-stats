@@ -11,7 +11,7 @@ Cucumber formatter that generates stats on all steps that are used during testin
 
 ## Configuration
 
-1. By adding `--format StepStatss::Formatter` to your `cucumber.yml` file.
+1. By adding `--format StepStats::Formatter` to your `cucumber.yml` file.
 
 2. Or, use it directly when running cucumber with the option `--format StepStats::Formatter`.
 
