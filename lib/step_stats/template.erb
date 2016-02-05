@@ -68,15 +68,19 @@
       <%= ERB.new(File.read(@path+"/table_partial.erb")).result(binding) %>
     </div>
     <div role="tabpanel" class="tab-pane" id="top30time">
-      <% @data = @sss.top30time %>
+      <% @data1 = @sss.top30time %>
+      <% @data2 = @sas.top30time %>
       <%= ERB.new(File.read(@path+"/table_partial.erb")).result(binding) %>
     </div>
     <div role="tabpanel" class="tab-pane" id="top30count">
-      <% @data = @sss.top30count %>
+      <% @data1 = @sss.top30count %>
+      <% @data2 = @sas.top30count %>
       <%= ERB.new(File.read(@path+"/table_partial.erb")).result(binding) %>
     </div>
     <div role="tabpanel" class="tab-pane" id="timeperstep">
       <span data-results="<%= ERB::Util.h(@sss.to_chart_data) %>"></span>
+      <br><hr><br>
+      <span data-results="<%= ERB::Util.h(@sas.to_chart_data) %>"></span>
       <div class="tps_chart"></div>
     </div>
   </div>
