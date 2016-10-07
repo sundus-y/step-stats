@@ -17,5 +17,5 @@ Cucumber formatter that generates stats on all steps that are used during testin
 
 ## Output
 
-The result is an HTML file which is saved in tmp/step_stats.html
+The result is an HTML file which is saved in `tmp/step_stats.html`
 #### Sample:> http://sundus-y.github.io/step_stats.html
